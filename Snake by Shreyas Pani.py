@@ -7,7 +7,7 @@ from tkinter import messagebox
 
 class cube(object):
     rows = 20
-    w = 500
+    w = 900
 
     def __init__(self, start, dirnx=1, dirny=0, color=(100, 100, 240)):
         self.pos = start
@@ -28,7 +28,7 @@ class cube(object):
         pygame.draw.rect(surface, self.color, (i * dis + 1, j * dis + 1, dis - 2, dis - 2))
         if eyes:
             centre = dis // 2
-            radius = 3
+            radius = 5
             circleMiddle = (i * dis + centre - radius, j * dis + 8)
             circleMiddle2 = (i * dis + dis - radius * 2, j * dis + 8)
             pygame.draw.circle(surface, (0, 0, 0), circleMiddle, radius)
@@ -54,22 +54,22 @@ class snake(object):
             keys = pygame.key.get_pressed()
 
             for key in keys:
-                if keys[pygame.K_LEFT]:
+                if keys[pygame.K_LEFT] or keys[pygame.K_a]:
                     self.dirnx = -1
                     self.dirny = 0
                     self.turns[self.head.pos[:]] = [self.dirnx, self.dirny]
 
-                elif keys[pygame.K_RIGHT]:
+                elif keys[pygame.K_RIGHT] or keys[pygame.K_d]:
                     self.dirnx = 1
                     self.dirny = 0
                     self.turns[self.head.pos[:]] = [self.dirnx, self.dirny]
 
-                elif keys[pygame.K_UP]:
+                elif keys[pygame.K_UP] or keys[pygame.K_w]:
                     self.dirnx = 0
                     self.dirny = -1
                     self.turns[self.head.pos[:]] = [self.dirnx, self.dirny]
 
-                elif keys[pygame.K_DOWN]:
+                elif keys[pygame.K_DOWN] or keys[pygame.K_s]:
                     self.dirnx = 0
                     self.dirny = 1
                     self.turns[self.head.pos[:]] = [self.dirnx, self.dirny]
@@ -134,13 +134,13 @@ def drawGrid(w, rows, surface):
         x = x + sizeBtwn
         y = y + sizeBtwn
 
-        pygame.draw.line(surface, (255, 255, 255), (x, 0), (x, w))
-        pygame.draw.line(surface, (255, 255, 255), (0, y), (w, y))
+        pygame.draw.line(surface, (0, 0, 0), (x, 0), (x, w))
+        pygame.draw.line(surface, (0, 0, 0), (0, y), (w, y))
 
 
 def redrawWindow(surface):
     global rows, width, s, snack
-    surface.fill((0, 0, 0))
+    surface.fill((255, 255, 255))
     s.draw(surface)
     snack.draw(surface)
     pointBoost.draw(surface)
@@ -173,15 +173,16 @@ def message_box(subject, content):
 
 
 def main():
-    message_box('Welcome to Snake by Shreyas Pani!', 'The White Square is the "Apple", while the Blue Square Adds Your Length to the Point Total. You have 5 Minutes or Until The Head Hits the Tail to Play. Press "OK" to Start.')
+    message_box('Welcome to Snake by Shreyas Pani!',
+                'The White Square is the "Apple", while the Green Square Adds Your Length to the Point Total. You have 5 Minutes or Until The Head Hits the Tail to Play. Press "OK" to Start.')
     global width, rows, s, snack, pointBoost
-    width = 500
+    width = 900
     rows = 20
     score = 0
     win = pygame.display.set_mode((width, width))
     s = snake((100, 100, 240), (10, 10))
     snack = cube(randomSnack(rows, s), color=(200, 200, 200))
-    pointBoost = cube(randomSnack(rows, s), color = (0, 0, 255))
+    pointBoost = cube(randomSnack(rows, s), color=(0, 200, 0))
     flag = True
     clock = pygame.time.Clock()
     while flag:
@@ -197,7 +198,7 @@ def main():
             print('')
             print('')
         elif s.body[0].pos == pointBoost.pos:
-            pointBoost = cube(randomSnack(rows, s), color = (0, 0, 255))
+            pointBoost = cube(randomSnack(rows, s), color=(0, 200, 0))
             score += len(s.body)
             print('New Score: {}'.format(score))
             print('Length: {}'.format(len(s.body)))
@@ -208,8 +209,9 @@ def main():
                 message_box('Game Over', 'Final Score: {}     ||    Press OK to Play Again.'.format(score))
                 s.reset((10, 10))
                 break
+            elif len(s.body) == 400:  # Beat the Game?
+                message_box('You Beat the Game?', 'Score: {}'.format(score))
         redrawWindow(win)
     pass
-
 
 main()
