@@ -1,2 +1,3 @@
 # Python-Snake
-The game Snake in Python
+Requires PyGame to Run
+Python 3.8
